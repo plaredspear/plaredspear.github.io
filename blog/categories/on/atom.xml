@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
-  <link href="http://plaredspear.github.io/atom.xml" rel="self"/>
+  <title><![CDATA[Category: On | My Octopress Blog]]></title>
+  <link href="http://plaredspear.github.io/blog/categories/on/atom.xml" rel="self"/>
   <link href="http://plaredspear.github.io/"/>
   <updated>2014-03-26T17:59:40+09:00</updated>
   <id>http://plaredspear.github.io/</id>
