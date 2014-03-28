@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[My Octopress Blog]]></title>
+  <title><![CDATA[blog.mark.ys]]></title>
   <link href="http://plaredspear.github.io/atom.xml" rel="self"/>
   <link href="http://plaredspear.github.io/"/>
-  <updated>2014-03-26T17:59:40+09:00</updated>
+  <updated>2014-03-28T15:05:16+09:00</updated>
   <id>http://plaredspear.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,171 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails-TDD : Rspec Matcher 이해하기]]></title>
+    <link href="http://plaredspear.github.io/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi/"/>
+    <updated>2014-03-28T13:56:50+09:00</updated>
+    <id>http://plaredspear.github.io/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi</id>
+    <content type="html"><![CDATA[<p>현재 <strong>Ruby on Rails, Korea 페이스북 그룹</strong>에서 <strong><a href="https://www.facebook.com/groups/rorlabrenewal/">홈페이지 리뉴얼 프로젝트(오픈 소스)</a></strong>를 진행 중에 있습니다.</p>
+
+<p>오픈 소스 프로젝트인 만큼 TDD를 베이스로 작업을 하고 있고, Rspec을 활용하고 있습니다.</p>
+
+<p>그 전에 Rspec에 대한 학습이 좀 필요한데요. Rspec의 matcher 부분을 확인해두면 기본적인 Spec을 활용할 수 있습니다.</p>
+
+<p><a href="https://docs.google.com/presentation/d/1W-qIfc8Rb7MlCNLb7PwceZeeuQGxvmSurMuqAuhzQwM">발표 자료</a></p>
+
+<p><a href="https://github.com/plaredspear/ror_tdd_example">샘플 예제 소스</a></p>
+
+<hr />
+
+<h3>1. Rspec Expectation 기본 구조</h3>
+
+<p>(* matcher는 Rspec Expectation의 모듈)</p>
+
+<blockquote><p>expect(actual).to matcher(expected)</p></blockquote>
+
+<p>expect(actual) : actual이 실제 테스트할 값 또는 블록, expect 메소드를 통해 처리하게 됨.</p>
+
+<p>matcher(expected) : expected가 예상하는 값 또는 블록, matcher 메소드가 actual값과 expected값을 비교.</p>
+
+<h3>2. 기본 matchers(Built in matchers)</h3>
+
+<ul>
+<li>&ldquo;Be&rdquo; matcher</li>
+</ul>
+
+
+<p>: 대상 object의 true, false</p>
+
+<ul>
+<li>Be_within matcher</li>
+</ul>
+
+
+<p>: 부동소수점(floating point)의 오차 허용 범위 판단</p>
+
+<ul>
+<li>Equality matcher</li>
+</ul>
+
+
+<p>: 두 object를 같은지 비교(reference, value, value with type casting)</p>
+
+<ul>
+<li>Exist matcher</li>
+</ul>
+
+
+<p>: exist? 또는 exists? 메소드가 존재하는 object의 경우 활용.
+(* predicate matcher와 동일한 역할을 하지만, 어휘적인 표현 때문에 예외시킨 것으로 보임)</p>
+
+<ul>
+<li>Expect matcher</li>
+</ul>
+
+
+<p>: from, to를 활용하여 object의 상태변화를 판단함.</p>
+
+<ul>
+<li>Raise_error matcher</li>
+</ul>
+
+
+<p>: error를 raise하는 경우에 대한 matcher.(* 발생 유무부터 메시지가 정확한지등)</p>
+
+<ul>
+<li>Have(n).items matcher</li>
+</ul>
+
+
+<p>: collection의 size를 판단.</p>
+
+<ul>
+<li>Include matcher</li>
+</ul>
+
+
+<p>: object가 actual을 가지는지에 대한 판단.</p>
+
+<ul>
+<li>Match matcher</li>
+</ul>
+
+
+<p>: 정규표현식</p>
+
+<ul>
+<li>Operator matcher</li>
+</ul>
+
+
+<p>: be matcher와 함께 사용하여 연산 결과를 판단.</p>
+
+<ul>
+<li>Predicate matcher</li>
+</ul>
+
+
+<p>: truthy한 결과를 나타내는 메소드를 &lsquo;be_&rsquo; 접두어를 붙여서 matcher로 활용.</p>
+
+<ul>
+<li>Respond_to matcher</li>
+</ul>
+
+
+<p>: 메소드의 존재 유무를 판단.</p>
+
+<ul>
+<li>Satisfy matcher</li>
+</ul>
+
+
+<p>: 특정 조건을 만족하는지를 판단.</p>
+
+<ul>
+<li>Throw_symbol matcher</li>
+</ul>
+
+
+<p>: catch-throw 구문 활용시 판단.</p>
+
+<ul>
+<li>Specify types of objects</li>
+</ul>
+
+
+<p>: 클래스 혹은 instance 종류를 판단.</p>
+
+<ul>
+<li>Yield matchers</li>
+</ul>
+
+
+<p>: (* 파악하지 못하였습니다. 추후 업데이트 예정입니다.)</p>
+
+<ul>
+<li>Cover matcher</li>
+</ul>
+
+
+<p>: Range를 가지는 구문에서 expected 값을 포함하는지 판단.</p>
+
+<ul>
+<li>End matcher</li>
+</ul>
+
+
+<p>: expected 값으로 끝나는지 판단.</p>
+
+<ul>
+<li>Start matcher</li>
+</ul>
+
+
+<p>: expected 값으로 시작하는지 판단.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rbenv에서 Bundle Exec 없이 Local Gem 선택하기]]></title>

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
 
-  <title><![CDATA[Category: Ruby | My Octopress Blog]]></title>
+  <title><![CDATA[Category: Ruby | blog.mark.ys]]></title>
   <link href="http://plaredspear.github.io/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://plaredspear.github.io/"/>
-  <updated>2014-03-26T17:59:40+09:00</updated>
+  <updated>2014-03-28T15:05:16+09:00</updated>
   <id>http://plaredspear.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
