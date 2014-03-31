@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>blog.mark.ys</title>
+  <title>Shoulda-matecher 요약 - blog.mark.ys</title>
   <meta name="author" content="Your Name">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://plaredspear.github.io">
+  <link rel="canonical" href="http://plaredspear.github.io/blog/2014/03/31/shoulda-matecher-summary">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="blog.mark.ys" type="application/atom+xml">
@@ -65,15 +65,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2014/03/31/shoulda-matecher-summary/">Shoulda-matecher 요약</a></h1>
+      <h1 class="entry-title">Shoulda-matecher 요약</h1>
     
     
       <p class="meta">
@@ -96,7 +93,7 @@
   </header>
 
 
-  <div class="entry-content"><p>one-liner 테스트</p>
+<div class="entry-content"><p>one-liner 테스트</p>
 
 <p><strong>ActiveModel Matcher</strong></p>
 
@@ -297,168 +294,16 @@
 
 <p></br></p>
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi/">Rails-TDD : Rspec Matcher 이해하기</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
   
 
+<span class="byline author vcard">Posted by <span class="fn">Your Name</span></span>
 
-<time datetime="2014-03-28T13:56:50+09:00" pubdate data-updated="true">Mar 28<span>th</span>, 2014</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>현재 <strong>Ruby on Rails, Korea 페이스북 그룹</strong>에서 <strong><a href="https://www.facebook.com/groups/rorlabrenewal/">홈페이지 리뉴얼 프로젝트(오픈 소스)</a></strong>를 진행 중에 있습니다.</p>
-
-<p>오픈 소스 프로젝트인 만큼 TDD를 베이스로 작업을 하고 있고, Rspec을 활용하고 있습니다.</p>
-
-<p>그 전에 Rspec에 대한 학습이 좀 필요한데요. Rspec의 matcher 부분을 확인해두면 기본적인 Spec을 활용할 수 있습니다.</p>
-
-<p><a href="https://docs.google.com/presentation/d/1W-qIfc8Rb7MlCNLb7PwceZeeuQGxvmSurMuqAuhzQwM">발표 자료</a></p>
-
-<p><a href="https://github.com/plaredspear/ror_tdd_example">샘플 예제 소스</a></p>
-
-<hr />
-
-<h3>1. Rspec Expectation 기본 구조</h3>
-
-<p>(* matcher는 Rspec Expectation의 모듈)</p>
-
-<blockquote><p>expect(actual).to matcher(expected)</p></blockquote>
-
-<p>expect(actual) : actual이 실제 테스트할 값 또는 블록, expect 메소드를 통해 처리하게 됨.</p>
-
-<p>matcher(expected) : expected가 예상하는 값 또는 블록, matcher 메소드가 actual값과 expected값을 비교.</p>
-
-<h3>2. 기본 matchers(Built in matchers)</h3>
-
-<table>
-<thead>
-<tr>
-<th align="center">matcher     </th>
-<th align="left"> summary </th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td align="center">&ldquo;Be&rdquo;  </td>
-<td align="left"> 대상 object의 true, false</td>
-</tr>
-<tr>
-<td align="center">Be_within </td>
-<td align="left"> 부동소수점(floating point)의 오차 허용 범위 판단</td>
-</tr>
-<tr>
-<td align="center">Equality </td>
-<td align="left"> 두 object를 같은지 비교(reference, value, value with type casting)</td>
-</tr>
-<tr>
-<td align="center">Exist </td>
-<td align="left"> exist? 또는 exists? 메소드가 존재하는 object의 경우 활용. (* predicate matcher와 동일한 역할을 하지만, 어휘적인 표현 때문에 예외시킨 것으로 보임)</td>
-</tr>
-<tr>
-<td align="center">Expect </td>
-<td align="left"> from, to를 활용하여 object의 상태변화를 판단함.</td>
-</tr>
-<tr>
-<td align="center">Raise_error </td>
-<td align="left"> error를 raise하는 경우에 대한 matcher.(* 발생 유무부터 메시지가 정확한지등)</td>
-</tr>
-<tr>
-<td align="center">Have(n).items </td>
-<td align="left"> collection의 size를 판단.</td>
-</tr>
-<tr>
-<td align="center">Include </td>
-<td align="left"> object가 actual을 가지는지에 대한 판단.</td>
-</tr>
-<tr>
-<td align="center">Match </td>
-<td align="left"> 정규표현식</td>
-</tr>
-<tr>
-<td align="center">Operator </td>
-<td align="left"> be matcher와 함께 사용하여 연산 결과를 판단.</td>
-</tr>
-<tr>
-<td align="center">Predicate </td>
-<td align="left"> truthy한 결과를 나타내는 메소드를 &lsquo;be_&rsquo; 접두어를 붙여서 matcher로 활용.</td>
-</tr>
-<tr>
-<td align="center">Respond_to </td>
-<td align="left"> 메소드의 존재 유무를 판단.</td>
-</tr>
-<tr>
-<td align="center">Satisfy </td>
-<td align="left"> 특정 조건을 만족하는지를 판단.</td>
-</tr>
-<tr>
-<td align="center">Throw_symbol </td>
-<td align="left"> catch-throw 구문 활용시 판단.</td>
-</tr>
-<tr>
-<td align="center">Specify types of objects </td>
-<td align="left"> 클래스 혹은 instance 종류를 판단.</td>
-</tr>
-<tr>
-<td align="center">Yield </td>
-<td align="left"> (* 파악하지 못하였습니다. 추후 업데이트 예정입니다.)</td>
-</tr>
-<tr>
-<td align="center">Cover </td>
-<td align="left"> Range를 가지는 구문에서 expected 값을 포함하는지 판단.</td>
-</tr>
-<tr>
-<td align="center">End </td>
-<td align="left"> expected 값으로 끝나는지 판단.</td>
-</tr>
-<tr>
-<td align="center">Start </td>
-<td align="left"> expected 값으로 시작하는지 판단.</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2014/03/26/rbenveseo-bundle-exec-eobsi-local-gem-seontaeghagi/">Rbenv에서 Bundle Exec 없이 Local Gem 선택하기</a></h1>
-    
-    
-      <p class="meta">
-        
 
 
 
@@ -470,64 +315,32 @@
   
 
 
-<time datetime="2014-03-26T15:33:47+09:00" pubdate data-updated="true">Mar 26<span>th</span>, 2014</time>
-        
-      </p>
+<time datetime="2014-03-31T16:31:12+09:00" pubdate data-updated="true">Mar 31<span>st</span>, 2014</time>
+      
+
+
+    </p>
     
-  </header>
-
-
-  <div class="entry-content"><ul>
-<li><h3>rvm의 gem version 관리</h3></li>
-</ul>
-
-
-<p>프로젝트가 늘어감에 따라, 프로젝트별로 gem version들을 관리해야할 필요가 생겼습니다.
-rvm에서는 어떻게 gem version을 관리하는지 확인을 해보니, gem list를 그룹화한 gemset을 통해서 version을 관리하고 있더라구요.
-그래서 작업할 프로젝트를 전환할 때는 gemset을 전환해줘야 합니다. (* gemset이 다를 경우)</p>
-
-<ul>
-<li><h3>rbenv의 gem version 관리</h3></li>
-</ul>
-
-
-<p>rbenv에서는 rvm처럼 gemset을 따로 관리해주는게 아니라 프로젝트별로 관리를 하고 있습니다.
-그렇기 때문에 프로젝트 전환시, 따로 gemset을 변환해줄 필요가 없습니다.</p>
-
-<p><strong>(추정)</strong> rbenv가 gem path를 프로젝트별로 등록해서 관리를 해주는 것 같습니다.</p>
-
-<ul>
-<li><h3>rbenv 설치 후, bundle exec 요청</h3></li>
-</ul>
-
-
-<p>(rbenv 사용) bundle install을 통해서 gem을 설치한 후, rake 명령을 실행하였더니, bundle exec를 넣어달라고 요청을 하였습니다.
-기존 rake(10.2.1)와 추가로 설치된 rake(0.9.6) 중에서 최신 버전을 선택하여 실행한 듯 보였습니다.</p>
-
-<p><strong>(추정)</strong> bundler를 통해 프로젝트별로 gem version을 세팅해주지만, rake 명령 자체는 global로 인식해서 최신 버전을 실행하는 것이 아닌가 합니다.
-그래서 bundle exec 구문을 통해 local gem version을 선택하여 rake 명령을 실행하는 것이 아닌가 하는 추정입니다.</p>
-
-<ul>
-<li><h3>rbenv-bundler, rbenv plug-in</h3></li>
-</ul>
-
-
-<p>rbenv plug-in : <a href="https://github.com/carsomyr/rbenv-bundler">rbenv-bundler</a></p>
-
-<p>위의 플러그인을 활용하면, 초기 설정 후 bundle exec 구문없이 실행할 수 있습니다.</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://plaredspear.github.io/blog/2014/03/31/shoulda-matecher-summary/" data-via="" data-counturl="http://plaredspear.github.io/blog/2014/03/31/shoulda-matecher-summary/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi/" title="Previous Post: Rails-TDD : rspec matcher 이해하기">&laquo; Rails-TDD : rspec matcher 이해하기</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -555,6 +368,7 @@ rvm에서는 어떻게 gem version을 관리하는지 확인을 해보니, gem l
 
   
 </aside>
+
 
     </div>
   </div>
