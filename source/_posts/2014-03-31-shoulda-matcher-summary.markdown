@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "shoulda-matecher 요약"
+title: "shoulda-matcher 요약"
 date: 2014-03-31 16:31:12 +0900
 comments: true
 categories: 
