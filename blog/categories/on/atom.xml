@@ -4,7 +4,7 @@
   <title><![CDATA[Category: On | blog.mark.ys]]></title>
   <link href="http://plaredspear.github.io/blog/categories/on/atom.xml" rel="self"/>
   <link href="http://plaredspear.github.io/"/>
-  <updated>2014-04-04T10:12:03+09:00</updated>
+  <updated>2014-04-23T20:09:11+09:00</updated>
   <id>http://plaredspear.github.io/</id>
   <author>
     <name><![CDATA[Your Name]]></name>
@@ -12,6 +12,530 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Rails : Custom Generator]]></title>
+    <link href="http://plaredspear.github.io/blog/2014/04/23/rails-custom-generator/"/>
+    <updated>2014-04-23T17:00:45+09:00</updated>
+    <id>http://plaredspear.github.io/blog/2014/04/23/rails-custom-generator</id>
+    <content type="html"><![CDATA[<p>Model, Controller를 생성할 때 반복적으로 이루어지는 코드들이 존재하여
+DRY 원칙을 적용하기 위해 Custom Generator를 만들어봤습니다.</p>
+
+<h3>1. 중복되는 요소 확인</h3>
+
+<ul>
+<li>Model의 Spec 구문(한글)</li>
+<li>Controller 메서드(API 형태로 만들기에 scaffold 메소드들과 일부 차이가 존재함.)</li>
+<li>Controller의 Spec 구문(한글)</li>
+</ul>
+
+
+<h3>2. Custom Generator</h3>
+
+<p>scaffold generator처럼 자동으로 생성되면 좋겠다하는 생각에
+Custom Generator를 검색해보게 되었습니다.</p>
+
+<p><a href="http://guides.rubyonrails.org/generators.html">Rails Guide : Creating and Customizing Rails Generators &amp; Templates</a></p>
+
+<p><a href="http://railscasts.com/episodes/218-making-generators-in-rails-3">Rails Case : Making Generators in Rails 3</a></p>
+
+<hr />
+
+<br />
+
+
+<h3>Flow 1. Custom Generator 생성</h3>
+
+<p>Rails의 generator를 이용하여 generate하면,</p>
+
+<pre><code>rails g generator api_controller
+</code></pre>
+
+<p>아래 파일들이 생성됩니다.</p>
+
+<pre><code>create  lib/generators/api_controller
+create  lib/generators/api_controller/api_controller_generator.rb
+create  lib/generators/api_controller/USAGE
+create  lib/generators/api_controller/templates
+</code></pre>
+
+<ul>
+<li>api_controller_generator.rb : custom generator가 수행할 작업들이 들어가게 됩니다.</li>
+<li>templates 폴더 : 템플릿 파일을 이용할 경우, 해당 폴더에 넣어두면 됩니다.</li>
+<li>USAGE : help 명령어 사용시 보여질 Description입니다.</li>
+</ul>
+
+
+<br />
+
+
+<h3>Flow 2. 동작 확인을 위한 간단한 출력</h3>
+
+<p>메소드를 하나 만들어서 테스트해봅니다.</p>
+
+<pre><code>def generate
+  puts "controller"
+end
+</code></pre>
+
+<p>이 때, public 과 private을 구분하여 선언해야 합니다.
+기본적으로 private으로 선언된 메소드들은 generate 실행시에 동작하지 않으며,
+public으로 선언된 메소드들은 (순차적으로) 모두 실행되게 됩니다.</p>
+
+<br />
+
+
+<h3>Flow 3. 인자값 전달</h3>
+
+<p>controller 생성시 controller의 이름이 필요합니다.
+argument 메소드를 통해서 입력된 인자들을 가져올 수 있습니다.</p>
+
+<pre><code>class ApiTestGenerator &lt; Rails::Generators::NamedBase
+  source_root File.expand_path('../templates', __FILE__)
+  argument :name, type: :string
+
+  def generate
+    puts "controller"
+  end
+end
+</code></pre>
+
+<br />
+
+
+<h3>Flow 4. template 파일 이용</h3>
+
+<p>controller 이름을 가져오는 controller_name이란 private 메소드를 생성한 뒤,
+template 파일을 생성합니다.</p>
+
+<pre><code>def generate
+  template "api_controller.rb", "app/controllers/#{controller_name}_controller.rb"
+end
+
+private
+
+def controller_name
+  name.underscore
+end
+</code></pre>
+
+<p>이제 api_controller.rb란 파일을 templates 폴더에 생성해줍니다.
+template 파일은 erb 형태로 작성하면 됩니다.</p>
+
+<pre><code>class &lt;%= controller_class %&gt; &lt; ApplicationController
+
+  def index
+  end
+end
+</code></pre>
+
+<br />
+
+
+<h3>Flow 5. generate 메소드</h3>
+
+<p>(api_controller 정리 후)
+model 부분은 spec 부분만 작업하면 되기에 기존의 model generator를 활용할 필요가 있었습니다.</p>
+
+<p>generate 메소드를 generator 안에서 처리할 수 있기에, 아래와 같이 처리를 하면
+generator를 이용할 수 있습니다.</p>
+
+<pre><code>def api_model
+ generate "model", "task title:string"
+end
+</code></pre>
+
+<br />
+
+
+<h3>Flow 6. Reversible!</h3>
+
+<p>generate 메소드를 이용하여 작업을 진행하려 했으나,
+한가지 문제가 있었습니다.
+내부에서 generate를 이용하는 경우, Destroy를 통한 Reversing이 안 됩니다.
+generate 메소드같은 destroy 메소드가 존재하지 않을까 하였지만 해당 부분은 존재하지 않는 것 같습니다.</p>
+
+<p>다른 방법을 구글링하던 중..</p>
+
+<p><a href="http://factore.ca/on-the-floor/126-reversible-rails-generators">Thor의 behavior 메소드를 override하는 방식</a></p>
+
+<p>(* generator는 Thor 기반으로 구성되어 있습니다.)</p>
+
+<p>위의 방식 대로는 destroy 부분을 구현을 할 수 있으나 직접해야하기에 문제는 해결이 되지 않습니다.</p>
+
+<p>그래서 좀 더 구글링..</p>
+
+<p><a href="http://stackoverflow.com/questions/5890650/how-to-get-generators-call-other-generators-in-rails-3">How to get generators call other generators in rails 3</a></p>
+
+<p>Rails::Generators.invoke 메소드를 이용하면 destroy도 실행되기에 Reversible한 조건이 충족됩니다.</p>
+
+<pre><code>Rails::Generators.invoke("active_record:model", ["#{model_name}", attributes, "--no-test-framework"], behavior: behavior)
+</code></pre>
+
+<br />
+
+
+<hr />
+
+<br />
+
+
+<h3>Extra 1. Rails::Generators::Base vs Rails::Generators::NameBase</h3>
+
+<p> Rails::Generators::Base는 Name이 optional.</p>
+
+<h3>Extra 2. Multiple argument</h3>
+
+<pre><code>argument :attributes, type: :array, required: false
+</code></pre>
+
+<h3>Extra 3. Multiple argument</h3>
+
+<p>public 메소드의 이름은 아무거나 정해도 됩니다.</p>
+
+<br />
+
+
+<br />
+
+
+<br />
+
+
+<br />
+
+
+<br />
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Shoulda-matcher 요약]]></title>
+    <link href="http://plaredspear.github.io/blog/2014/03/31/shoulda-matcher-summary/"/>
+    <updated>2014-03-31T16:31:12+09:00</updated>
+    <id>http://plaredspear.github.io/blog/2014/03/31/shoulda-matcher-summary</id>
+    <content type="html"><![CDATA[<p>one-liner 테스트</p>
+
+<p><strong>ActiveModel Matcher</strong></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">matcher name </th>
+<th align="center"> validation </th>
+<th> summary(or validation&rsquo;s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">allow_mass_assignment_of </td>
+<td align="center"> </td>
+<td> rails 3의 attr_accesible과 attr_protected macro 적용 유무</td>
+</tr>
+<tr>
+<td align="center">allow_value </td>
+<td align="center"> validates_format_of </td>
+<td> 특정 format을 만족하면 valid(ex. 정규표현식, 날짜타입)</td>
+</tr>
+<tr>
+<td align="center">ensure_inclusion_of </td>
+<td align="center"> validates_inclusion_of </td>
+<td> 포함하면 valid</td>
+</tr>
+<tr>
+<td align="center">ensure_exclusion_of </td>
+<td align="center"> validates_exclusion_of </td>
+<td> 포함하지 않아야 valid</td>
+</tr>
+<tr>
+<td align="center">ensure_lenghth_of </td>
+<td align="center"> validates_length_of </td>
+<td> 길이 관련 validation</td>
+</tr>
+<tr>
+<td align="center">have_secure_password </td>
+<td align="center"> has_secure_password </td>
+<td> bcrypt 암호화가 되었으면 valid</td>
+</tr>
+<tr>
+<td align="center">validate_absence_of </td>
+<td align="center"> validates_absence_of </td>
+<td> blank이면 valid</td>
+</tr>
+<tr>
+<td align="center">validate_acceptance_of </td>
+<td align="center"> validates_acceptance_of </td>
+<td> checkbox 같은 acceptance가 있으면 valid(ex. terms of service)</td>
+</tr>
+<tr>
+<td align="center">validate_confirmation_of </td>
+<td align="center"> validates_confirmation_of </td>
+<td> in-memory에 attribute를 생성하여 confirmation이 valid한지 체크</td>
+</tr>
+<tr>
+<td align="center">validate_numericality_of </td>
+<td align="center"> validates_numericality_of </td>
+<td> 숫자이면 valid</td>
+</tr>
+<tr>
+<td align="center">validate_presence_of </td>
+<td align="center"> validates_presence_of </td>
+<td> non blank이면 valid</td>
+</tr>
+<tr>
+<td align="center">validate_uniqueness_of </td>
+<td align="center"> validates_uniqueness_of </td>
+<td> unique하면 valid</td>
+</tr>
+</tbody>
+</table>
+
+
+<p></br></br></p>
+
+<p><strong>ActiveRecord Matchers</strong></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">matcher name </th>
+<th align="left"> validation(or summary)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">accept_nested_attributes_for </td>
+<td align="left"> accepts_nested_attributes_for</td>
+</tr>
+<tr>
+<td align="center">belong_to </td>
+<td align="left"> belongs_to</td>
+</tr>
+<tr>
+<td align="center">have_many </td>
+<td align="left"> has_many, has_many :through</td>
+</tr>
+<tr>
+<td align="center">have_one </td>
+<td align="left"> has_one, has_one :through</td>
+</tr>
+<tr>
+<td align="center">have_and_belong_to_many </td>
+<td align="left"> has_and_belongs_to_many</td>
+</tr>
+<tr>
+<td align="center">have_db_column </td>
+<td align="left"> 특정 column이 존재하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">have_db_index </td>
+<td align="left"> 특정 column의 index가 존재하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">have_readonly_attribute </td>
+<td align="left"> attr_readonly</td>
+</tr>
+<tr>
+<td align="center">serialize </td>
+<td align="left"> serialize</td>
+</tr>
+</tbody>
+</table>
+
+
+<p></br></br></p>
+
+<p><strong>ActiveController Matchers</strong></p>
+
+<table>
+<thead>
+<tr>
+<th align="center">matcher name </th>
+<th align="center"> summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">filter_param </td>
+<td align="center"> 설정값 테스트(configuration)</td>
+</tr>
+<tr>
+<td align="center">permit </td>
+<td align="center"> whitelist 파라미터 테스트</td>
+</tr>
+<tr>
+<td align="center">redirect_to </td>
+<td align="center"> redirect 테스트</td>
+</tr>
+<tr>
+<td align="center">render_template </td>
+<td align="center"> 특정 template을 렌더링하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">render_with_layout </td>
+<td align="center"> 특정 layout을 렌더링하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">rescue_from </td>
+<td align="center"> (확인중입니다.)</td>
+</tr>
+<tr>
+<td align="center">respond_with </td>
+<td align="center"> 특정 status code와 함께 respond 되는지 테스트</td>
+</tr>
+<tr>
+<td align="center">route </td>
+<td align="center"> 해당 controller, action, params를 생성하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">set_session </td>
+<td align="center"> session에 특정 hash 값이 존재하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">set_the_flash </td>
+<td align="center"> flash에 특정 hash 값이 존재하는지 테스트</td>
+</tr>
+<tr>
+<td align="center">use_after_filter / use_after_action </td>
+<td align="center"> after_filter가 사용되는지 테스트</td>
+</tr>
+<tr>
+<td align="center">use_before_filter / use_before_action </td>
+<td align="center"> before_filter가 사용되는지 테스트</td>
+</tr>
+</tbody>
+</table>
+
+
+<p></br></br></p>
+
+<p><strong>Independent Matchers</strong></p>
+
+<p>non-Rails-dependent code test</p>
+
+<p></br></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Rails-TDD : Rspec Matcher 이해하기]]></title>
+    <link href="http://plaredspear.github.io/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi/"/>
+    <updated>2014-03-28T13:56:50+09:00</updated>
+    <id>http://plaredspear.github.io/blog/2014/03/28/rails-tdd-rspec-matcher-ihaehagi</id>
+    <content type="html"><![CDATA[<p>현재 <strong>Ruby on Rails, Korea 페이스북 그룹</strong>에서 <strong><a href="https://www.facebook.com/groups/rorlabrenewal/">홈페이지 리뉴얼 프로젝트(오픈 소스)</a></strong>를 진행 중에 있습니다.</p>
+
+<p>오픈 소스 프로젝트인 만큼 TDD를 베이스로 작업을 하고 있고, Rspec을 활용하고 있습니다.</p>
+
+<p>그 전에 Rspec에 대한 학습이 좀 필요한데요. Rspec의 matcher 부분을 확인해두면 기본적인 Spec을 활용할 수 있습니다.</p>
+
+<p><a href="https://docs.google.com/presentation/d/1W-qIfc8Rb7MlCNLb7PwceZeeuQGxvmSurMuqAuhzQwM">발표 자료</a></p>
+
+<p><a href="https://github.com/plaredspear/ror_tdd_example">샘플 예제 소스</a></p>
+
+<hr />
+
+<h3>1. Rspec Expectation 기본 구조</h3>
+
+<p>(* matcher는 Rspec Expectation의 모듈)</p>
+
+<blockquote><p>expect(actual).to matcher(expected)</p></blockquote>
+
+<p>expect(actual) : actual이 실제 테스트할 값 또는 블록, expect 메소드를 통해 처리하게 됨.</p>
+
+<p>matcher(expected) : expected가 예상하는 값 또는 블록, matcher 메소드가 actual값과 expected값을 비교.</p>
+
+<h3>2. 기본 matchers(Built in matchers)</h3>
+
+<table>
+<thead>
+<tr>
+<th align="center">matcher     </th>
+<th align="left"> summary </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">&ldquo;Be&rdquo;  </td>
+<td align="left"> 대상 object의 true, false</td>
+</tr>
+<tr>
+<td align="center">Be_within </td>
+<td align="left"> 부동소수점(floating point)의 오차 허용 범위 판단</td>
+</tr>
+<tr>
+<td align="center">Equality </td>
+<td align="left"> 두 object를 같은지 비교(reference, value, value with type casting)</td>
+</tr>
+<tr>
+<td align="center">Exist </td>
+<td align="left"> exist? 또는 exists? 메소드가 존재하는 object의 경우 활용. (* predicate matcher와 동일한 역할을 하지만, 어휘적인 표현 때문에 예외시킨 것으로 보임)</td>
+</tr>
+<tr>
+<td align="center">Expect </td>
+<td align="left"> from, to를 활용하여 object의 상태변화를 판단함.</td>
+</tr>
+<tr>
+<td align="center">Raise_error </td>
+<td align="left"> error를 raise하는 경우에 대한 matcher.(* 발생 유무부터 메시지가 정확한지등)</td>
+</tr>
+<tr>
+<td align="center">Have(n).items </td>
+<td align="left"> collection의 size를 판단.</td>
+</tr>
+<tr>
+<td align="center">Include </td>
+<td align="left"> object가 actual을 가지는지에 대한 판단.</td>
+</tr>
+<tr>
+<td align="center">Match </td>
+<td align="left"> 정규표현식</td>
+</tr>
+<tr>
+<td align="center">Operator </td>
+<td align="left"> be matcher와 함께 사용하여 연산 결과를 판단.</td>
+</tr>
+<tr>
+<td align="center">Predicate </td>
+<td align="left"> truthy한 결과를 나타내는 메소드를 &lsquo;be_&rsquo; 접두어를 붙여서 matcher로 활용.</td>
+</tr>
+<tr>
+<td align="center">Respond_to </td>
+<td align="left"> 메소드의 존재 유무를 판단.</td>
+</tr>
+<tr>
+<td align="center">Satisfy </td>
+<td align="left"> 특정 조건을 만족하는지를 판단.</td>
+</tr>
+<tr>
+<td align="center">Throw_symbol </td>
+<td align="left"> catch-throw 구문 활용시 판단.</td>
+</tr>
+<tr>
+<td align="center">Specify types of objects </td>
+<td align="left"> 클래스 혹은 instance 종류를 판단.</td>
+</tr>
+<tr>
+<td align="center">Yield </td>
+<td align="left"> (* 파악하지 못하였습니다. 추후 업데이트 예정입니다.)</td>
+</tr>
+<tr>
+<td align="center">Cover </td>
+<td align="left"> Range를 가지는 구문에서 expected 값을 포함하는지 판단.</td>
+</tr>
+<tr>
+<td align="center">End </td>
+<td align="left"> expected 값으로 끝나는지 판단.</td>
+</tr>
+<tr>
+<td align="center">Start </td>
+<td align="left"> expected 값으로 시작하는지 판단.</td>
+</tr>
+</tbody>
+</table>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Rbenv에서 Bundle Exec 없이 Local Gem 선택하기]]></title>
